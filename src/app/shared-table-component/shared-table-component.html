@@ -1,0 +1,181 @@
+<section class="dt-wrapper">
+  <div class="dt-toolbar">
+    <div class="dt-search">
+      <span class="dt-search__icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65"
+            y2="16.65" />
+        </svg>
+      </span>
+      <input
+        class="dt-search__input"
+        type="search"
+        [placeholder]="config.searchPlaceholder ?? 'Search all columns…'"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        aria-label="Search table" />
+      <button
+        *ngIf="searchQuery"
+        class="dt-search__clear"
+        (click)="searchQuery = ''; onSearchChange()"
+        aria-label="Clear search">✕</button>
+    </div>
+
+    <span class="dt-result-count" aria-live="polite">
+      <ng-container *ngIf="!loading">
+        {{ filteredRows.length }} result{{ filteredRows.length !== 1 ? 's' : ''
+        }}
+      </ng-container>
+    </span>
+  </div>
+
+  <div class="dt-scroll-container" role="region" aria-label="Data table"
+    tabindex="0">
+    <table class="dt-table" [attr.aria-rowcount]="filteredRows.length">
+      <thead class="dt-thead">
+        <tr>
+          <th
+            *ngFor="let col of columns; let i = index"
+            class="dt-th"
+            [class.dt-th--sortable]="col.sortable"
+            [class.dt-th--sort-asc]="sort.column === col.key && sort.direction === 'asc'"
+            [class.dt-th--sort-desc]="sort.column === col.key && sort.direction === 'desc'"
+            [style.minWidth]="col.minWidth ?? 'auto'"
+            (click)="onSort(col)"
+            [attr.aria-sort]="
+              sort.column === col.key
+                ? (sort.direction === 'asc' ? 'ascending' : 'descending')
+                : (col.sortable ? 'none' : null)
+            ">
+            <span class="dt-th__content">
+              {{ col.label }}
+              <span *ngIf="col.sortable" class="dt-sort-icon"
+                aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <ng-container *ngIf="sort.column !== col.key">
+                    <path d="M7 10l5-5 5 5H7zm0 4l5 5 5-5H7z" />
+                  </ng-container>
+                  <ng-container
+                    *ngIf="sort.column === col.key && sort.direction === 'asc'">
+                    <path d="M7 14l5-5 5 5H7z" />
+                  </ng-container>
+                  <ng-container
+                    *ngIf="sort.column === col.key && sort.direction === 'desc'">
+                    <path d="M7 10l5 5 5-5H7z" />
+                  </ng-container>
+                </svg>
+              </span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="dt-tbody">
+        <ng-container *ngIf="loading">
+          <tr *ngFor="let _ of [1,2,3,4,5]; let i = index"
+            class="dt-tr dt-tr--skeleton">
+            <td *ngFor="let col of columns; let i = index" class="dt-td">
+              <span class="dt-skeleton"></span>
+            </td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="!loading && pagedRows.length === 0">
+          <tr class="dt-tr dt-tr--empty">
+            <td [attr.colspan]="columns.length" class="dt-td dt-td--empty">
+              <div class="dt-empty">
+                <svg class="dt-empty__icon" width="48" height="48"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.2">
+                  <path d="M3 3h18v4H3z" /><path d="M3 7v14h18V7" /><path
+                    d="M9 12h6m-3-3v6" />
+                </svg>
+                <p class="dt-empty__title">No results found</p>
+                <p class="dt-empty__subtitle" *ngIf="searchQuery">
+                  Try adjusting your search — no rows match
+                  <strong>"{{ searchQuery }}"</strong>
+                </p>
+                <p class="dt-empty__subtitle" *ngIf="!searchQuery">
+                  There's nothing here yet.
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="!loading && pagedRows.length > 0">
+          <tr
+            *ngFor="let row of pagedRows; let i = index"
+            class="dt-tr">
+            <td
+              *ngFor="let col of columns; let i = index"
+              class="dt-td">
+              <span *ngIf="col.key !='status'">{{row[col.key]}}</span>
+
+              <span *ngIf="col.key ==='status'"
+                [ngClass]="row[col.key] === 'active' ? 'dt-badge dt-badge--active' : 'dt-badge dt-badge--inactive'">{{row[col.key]}}</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dt-pagination" *ngIf="!loading">
+    <div class="dt-pagination__info">
+      <ng-container *ngIf="filteredRows.length > 0">
+        Showing <strong>{{ startRow }}–{{ endRow }}</strong> of <strong>{{
+          filteredRows.length }}</strong>
+      </ng-container>
+    </div>
+
+    <div class="dt-pagination__controls">
+      <button
+        class="dt-page-btn dt-page-btn--nav"
+        [disabled]="pagination.page === 1"
+        (click)="goToPage(1)"
+        aria-label="First page">«</button>
+      <button
+        class="dt-page-btn dt-page-btn--nav"
+        [disabled]="pagination.page === 1"
+        (click)="goToPage(pagination.page - 1)"
+        aria-label="Previous page">‹</button>
+
+      <ng-container *ngFor="let p of pageNumbers; let i = index">
+        <span *ngIf="p === -1" class="dt-page-ellipsis">…</span>
+        <button
+          *ngIf="p !== -1"
+          class="dt-page-btn"
+          [class.dt-page-btn--active]="p === pagination.page"
+          (click)="goToPage(p)"
+          [attr.aria-current]="p === pagination.page ? 'page' : null">{{ p
+          }}</button>
+      </ng-container>
+
+      <button
+        class="dt-page-btn dt-page-btn--nav"
+        [disabled]="pagination.page === totalPages"
+        (click)="goToPage(pagination.page + 1)"
+        aria-label="Next page">›</button>
+      <button
+        class="dt-page-btn dt-page-btn--nav"
+        [disabled]="pagination.page === totalPages"
+        (click)="goToPage(totalPages)"
+        aria-label="Last page">»</button>
+    </div>
+
+    <div class="dt-pagination__size">
+      <label for="dt-page-size" class="dt-pagination__size-label">Rows</label>
+      <select
+        id="dt-page-size"
+        class="dt-select"
+        [ngModel]="pagination.pageSize"
+        (ngModelChange)="onPageSizeChange($event)">
+        <option *ngFor="let size of config.pageSizeOptions" [value]="size">{{
+          size }}</option>
+      </select>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,21 @@
+<div class="app">
+    <header class="app-header">
+        <div class="app-header__inner">
+            <div class="app-header__brand">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <rect width="28" height="28" rx="7" fill="#3d6bff" />
+                    <path d="M7 9h14M7 14h9M7 19h12" stroke="white"
+                        stroke-width="2.2" stroke-linecap="round" />
+                </svg>
+                <span class="app-header__title">DataTable</span>
+            </div>
+        </div>
+    </header>
+    <main class="app-main">
+        <app-shared-table-component
+            [rows]="users"
+            [columns]="columns"
+            [loading]="loading"
+            [config]="{ pageSizeOptions: [10, 25, 50], searchPlaceholder: 'Search users…' }"></app-shared-table-component>
+    </main>
+</div>
