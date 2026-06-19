@@ -1,59 +1,125 @@
-# TechnicalAssessmentProject
+# Technical Assessment Project
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.12.
+An Angular application scaffolded with [Angular CLI](https://github.com/angular/angular-cli) version 20.3.12, using Angular 20 with strict TypeScript configuration.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Framework:** Angular 20
+- **Language:** TypeScript 5.9
+- **Build Tool:** Angular CLI / `@angular/build`
+- **Testing:** Karma + Jasmine
+- **Styling:** SCSS
+- **Module System:** ES2022 / `preserve` modules
+- **Reactive:** RxJS 7.8
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [Angular CLI](https://angular.dev/tools/cli) — install globally:
+
+```bash
+npm install -g @angular/cli
+```
+
+## Getting Started
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/` in your browser. The app reloads automatically on file changes.
 
-## Code scaffolding
+## Project Structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+technical-assessment-project/
+├── src/
+│   ├── app/          # Application components, services, modules
+│   ├── main.ts       # Application entry point
+│   └── styles.css    # Global styles
+├── public/           # Static assets
+├── angular.json      # Angular CLI workspace configuration
+├── tsconfig.json     # Base TypeScript configuration
+├── tsconfig.app.json # TypeScript config for the app build
+├── tsconfig.spec.json# TypeScript config for tests
+└── package.json      # Dependencies and scripts
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Available Scripts
 
-```bash
-ng generate --help
-```
+| Command           | Description                                      |
+|-------------------|--------------------------------------------------|
+| `npm start`       | Start the development server (`ng serve`)        |
+| `npm run build`   | Build for production (`dist/`)                   |
+| `npm run watch`   | Build in watch mode (development configuration)  |
+| `npm test`        | Run unit tests via Karma                         |
 
 ## Building
 
-To build the project run:
+Build the project for production:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Output artifacts are placed in the `dist/` directory. The production build optimizes the application for performance (output hashing, budgets enforced).
 
-## Running unit tests
+**Build budgets:**
+- Initial bundle: warning at 500 kB, error at 1 MB
+- Component styles: warning at 4 kB, error at 8 kB
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Running Tests
+
+Execute unit tests with the Karma test runner:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Code Scaffolding
 
-For end-to-end (e2e) testing, run:
+Generate a new component:
 
 ```bash
-ng e2e
+ng generate component component-name
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+List all available schematics:
+
+```bash
+ng generate --help
+```
+
+## TypeScript Configuration
+
+This project uses strict TypeScript settings:
+
+- `strict: true`
+- `noImplicitOverride`
+- `noPropertyAccessFromIndexSignature`
+- `noImplicitReturns`
+- `noFallthroughCasesInSwitch`
+- Angular strict templates and strict injection parameters
+
+## Code Style
+
+This project uses [Prettier](https://prettier.io/) for code formatting with the following configuration:
+
+- Print width: 100 characters
+- Single quotes
+- Angular HTML parser for `.html` files
 
 ## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular Documentation](https://angular.dev/)
+- [Angular CLI Reference](https://angular.dev/tools/cli)
+- [RxJS Documentation](https://rxjs.dev/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/)
